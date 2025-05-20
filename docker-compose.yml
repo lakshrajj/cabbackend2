@@ -1,0 +1,40 @@
+version: '3'
+services:
+  app:
+    container_name: cabpool-backend
+    restart: always
+    build: .
+    ports:
+      - '5000:5000'
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/cabpool
+      - JWT_SECRET=your_jwt_secret_key_change_in_production
+      - JWT_EXPIRE=30d
+      - GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - cabpool-network
+
+  mongo:
+    container_name: cabpool-mongodb
+    image: mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - cabpool-network
+
+networks:
+  cabpool-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
